@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -104,7 +105,12 @@ static bool map_path(const std::string& raw, std::string& file_out) {
 }
 
 // Read a whole file into memory. Returns false if it cannot be opened.
+// Only regular files count: on Linux a directory opens without error and
+// reads as zero bytes, which would otherwise be sent as an empty 200.
 static bool read_file(const std::string& path, std::vector<uint8_t>& out) {
+    std::error_code ec;
+    if (!std::filesystem::is_regular_file(path, ec)) return false;
+
     std::ifstream f(path, std::ios::binary);
     if (!f) return false;
     out.assign(std::istreambuf_iterator<char>(f),
