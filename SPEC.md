@@ -207,6 +207,11 @@ client                                          server
 
 The connection stays open between requests. The stream id counts up: 1, 2,
 3, … A response always carries the stream id of the request it answers.
+Stream id **0** is never used by a request; it means "the whole connection"
+and appears only on `GOAWAY` and on errors that belong to no request.
+
+A `REQUEST` always sets `END_MSG`: a `GET` has no body, so the request is one
+frame. A `DATA` frame from the client is answered with `400`.
 
 ---
 
@@ -235,6 +240,9 @@ field sets the ceiling, the implementation sets the policy.
 
 `GOAWAY` is for failures that are not about one request, such as a bad
 preface. Its payload is a 16-bit code followed by a human-readable reason.
+The code reuses the status numbers above (`400` = the peer broke the
+protocol, `500` = the sender failed). The sender closes the connection right
+after it; the receiver stops sending and closes too.
 
 ---
 
