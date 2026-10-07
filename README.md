@@ -1,4 +1,4 @@
-# HTTP, in binary — a small protocol, a server and a client
+# Server Specs: BHTTP/1 — HTTP in binary, a small protocol, a server and a client
 
 A course project in two tracks and one protocol.
 
