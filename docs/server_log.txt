@@ -1,0 +1,42 @@
+bserve: serving 'www' on port 9000
+bserve: waiting for connections (Ctrl+C to stop)
+[conn 1] accepted from 127.0.0.1:64405
+[conn 1] preface ok, connection open
+[conn 1] stream 1  GET /index.html
+[conn 1]   200 www/index.html (373 bytes)
+[conn 1] client closed the connection
+[conn 1] closed
+[conn 2] accepted from 127.0.0.1:52974
+[conn 2] preface ok, connection open
+[conn 2] stream 1  GET /missing.html
+[conn 2]   www/missing.html not found -> 404
+[conn 2] client closed the connection
+[conn 2] closed
+[conn 3] accepted from 127.0.0.1:52975
+[conn 3] preface ok, connection open
+[conn 3] stream 1  GET /index.html
+[conn 3]   200 www/index.html (373 bytes)
+[conn 3] stream 2  GET /about.html
+[conn 3]   200 www/about.html (352 bytes)
+[conn 3] stream 3  GET /notes.txt
+[conn 3]   200 www/notes.txt (97 bytes)
+[conn 3] client closed the connection
+[conn 3] closed
+[conn 4] accepted from 127.0.0.1:52976
+[conn 4] preface ok, connection open
+[conn 4] unknown frame type 0x2a, 27 bytes skipped
+[conn 4] stream 1  GET /notes.txt
+[conn 4]   200 www/notes.txt (97 bytes)
+[conn 4] client closed the connection
+[conn 4] closed
+[conn 5] accepted from 127.0.0.1:52977
+[conn 5] preface ok, connection open
+[conn 5] malformed header block -> 400
+[conn 5] client closed the connection
+[conn 5] closed
+[conn 6] accepted from 127.0.0.1:52978
+[conn 6] preface ok, connection open
+[conn 6] stream 1  GET /../secret.txt
+[conn 6]   unsafe path -> 400
+[conn 6] client closed the connection
+[conn 6] closed

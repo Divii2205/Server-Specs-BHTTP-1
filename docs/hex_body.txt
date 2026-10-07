@@ -1,0 +1,2 @@
+Plain text file, served as text/plain.
+Useful for checking that the body bytes arrive unchanged.

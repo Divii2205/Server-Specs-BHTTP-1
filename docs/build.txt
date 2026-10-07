@@ -1,0 +1,6 @@
+Building bserve.exe ...
+Building bcurl.exe ...
+
+Done. The programs are in the bin folder:
+   bin\bserve.exe www 9000
+   bin\bcurl.exe -v localhost:9000/index.html

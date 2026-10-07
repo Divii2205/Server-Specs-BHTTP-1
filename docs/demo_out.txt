@@ -1,0 +1,75 @@
+============================================================
+ TEST 1  fetch a page that exists   (expect exit 0)
+============================================================
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>bserve</title></head>
+<body>
+  <h1>It works.</h1>
+  <p>This page was delivered over BHTTP/1, a binary framing protocol.</p>
+  <p>No text request line, no CRLF headers - just frames.</p>
+  <ul>
+    <li><a href="/about.html">about.html</a></li>
+    <li><a href="/notes.txt">notes.txt</a></li>
+  </ul>
+</body>
+</html>
+[exit code: 0]
+
+============================================================
+ TEST 2  fetch a page that does NOT exist   (expect exit 4)
+============================================================
+404 Not Found
+[exit code: 4]
+
+============================================================
+ TEST 3  three files over ONE connection   (expect exit 0)
+============================================================
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>bserve</title></head>
+<body>
+  <h1>It works.</h1>
+  <p>This page was delivered over BHTTP/1, a binary framing protocol.</p>
+  <p>No text request line, no CRLF headers - just frames.</p>
+  <ul>
+    <li><a href="/about.html">about.html</a></li>
+    <li><a href="/notes.txt">notes.txt</a></li>
+  </ul>
+</body>
+</html>
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>about</title></head>
+<body>
+  <h1>About this server</h1>
+  <p>bserve reads one binary REQUEST frame, maps the path to a file under
+     its root directory, and replies with a RESPONSE frame followed by
+     DATA frames. Then it keeps the connection open and waits for more.</p>
+</body>
+</html>
+Plain text file, served as text/plain.
+Useful for checking that the body bytes arrive unchanged.
+[exit code: 0]
+
+============================================================
+ TEST 4  unknown frame type is skipped cleanly  (expect exit 0)
+============================================================
+Plain text file, served as text/plain.
+Useful for checking that the body bytes arrive unchanged.
+[exit code: 0]
+
+============================================================
+ TEST 5  malformed frame   (expect 400, exit 4)
+============================================================
+bcurl: server answered 400 to the malformed frame
+400 Bad Request: malformed header block
+[exit code: 4]
+
+============================================================
+ TEST 6  path that tries to escape the root  (expect 400, exit 4)
+============================================================
+400 Bad Request: unsafe path
+[exit code: 4]
+
+All tests finished.

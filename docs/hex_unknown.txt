@@ -1,0 +1,33 @@
+C: connected to localhost:9000
+C> PREFACE  (8 bytes)
+  0000  42 48 54 54 50 2f 31 0a                           |BHTTP/1.|
+C> UNKNOWN (type 0x2a)  (35 bytes)
+  0000  00 00 1b 2a 00 00 00 01  68 65 6c 6c 6f 20 66 72  |...*....hello fr|
+  0010  6f 6d 20 61 20 66 75 74  75 72 65 20 76 65 72 73  |om a future vers|
+  0020  69 6f 6e                                          |ion|
+C> GET /notes.txt  (stream 1)
+C> REQUEST frame  (52 bytes)
+  0000  00 00 2c 01 01 00 00 01  04 01 00 03 47 45 54 02  |..,.........GET.|
+  0010  00 0a 2f 6e 6f 74 65 73  2e 74 78 74 04 00 09 6c  |../notes.txt...l|
+  0020  6f 63 61 6c 68 6f 73 74  07 00 09 62 63 75 72 6c  |ocalhost...bcurl|
+  0030  2f 31 2e 30                                       |/1.0|
+C< RESPONSE frame  (74 bytes)
+  0000  00 00 42 02 00 00 00 01  00 c8 04 06 00 0a 74 65  |..B...........te|
+  0010  78 74 2f 70 6c 61 69 6e  05 00 02 39 37 08 00 0a  |xt/plain...97...|
+  0020  62 73 65 72 76 65 2f 31  2e 30 09 00 1d 46 72 69  |bserve/1.0...Fri|
+  0030  2c 20 32 35 20 53 65 70  20 32 30 32 36 20 31 30  |, 25 Sep 2026 10|
+  0040  3a 35 36 3a 33 33 20 47  4d 54                    |:56:33 GMT|
+C< status 200
+C<   content-type: text/plain
+C<   content-length: 97
+C<   server: bserve/1.0
+C<   date: Fri, 25 Sep 2026 10:56:33 GMT
+C< DATA frame  (105 bytes)
+  0000  00 00 61 03 01 00 00 01  50 6c 61 69 6e 20 74 65  |..a.....Plain te|
+  0010  78 74 20 66 69 6c 65 2c  20 73 65 72 76 65 64 20  |xt file, served |
+  0020  61 73 20 74 65 78 74 2f  70 6c 61 69 6e 2e 0a 55  |as text/plain..U|
+  0030  73 65 66 75 6c 20 66 6f  72 20 63 68 65 63 6b 69  |seful for checki|
+  0040  6e 67 20 74 68 61 74 20  74 68 65 20 62 6f 64 79  |ng that the body|
+  0050  20 62 79 74 65 73 20 61  72 72 69 76 65 20 75 6e  | bytes arrive un|
+  0060  63 68 61 6e 67 65 64 2e  0a                       |changed..|
+C: --- /notes.txt -> 200 ---
