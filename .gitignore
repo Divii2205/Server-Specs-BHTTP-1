@@ -1,0 +1,4 @@
+# Build output - rebuild with build.bat or make
+bin/
+*.o
+*.obj
