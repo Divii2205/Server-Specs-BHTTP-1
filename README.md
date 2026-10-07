@@ -16,6 +16,20 @@ A course project in two tracks and one protocol.
 Written in C++17. About 900 lines. No libraries beyond the standard library
 and the operating system's sockets.
 
+### In simple words
+
+* Normal websites talk in **text**. This project makes a small version of a
+  website that talks in **bytes** (numbers) instead.
+* **`bserve`** is the **server**. It sits and waits. When someone asks for a
+  file, it finds the file in the `www` folder and sends it back.
+* **`bcurl`** is the **client**. You give it a file name, it asks the server
+  for it, and it prints what comes back.
+* Every message is put in a small **box** called a **frame**. The first 8 bytes
+  of the box say how big the box is and what is inside.
+* If the server gets a box it does not understand, it **throws it away and
+  keeps going**. This lets a newer version add new kinds of boxes later.
+* All screenshots below are from **Windows**, in PowerShell.
+
 ---
 
 ## What is in this folder
@@ -49,6 +63,9 @@ build.bat
 <p align="center">
   <img src="docs/screenshots/01-build.png" alt="the build finishing" width="620">
 </p>
+
+> **What you see:** `build.bat` turns the code into two programs,
+> `bserve.exe` and `bcurl.exe`, and puts them in the `bin` folder.
 
 If `g++` is not found, install [MSYS2](https://www.msys2.org/), run
 `pacman -S mingw-w64-ucrt-x86_64-gcc`, and add `C:\msys64\ucrt64\bin` to your
@@ -86,11 +103,22 @@ It prints a line for every connection, request and reply:
   <img src="docs/screenshots/02-server.png" alt="the server log" width="640">
 </p>
 
+> **What you see:** the server is running on port 9000. Each `[conn N]` is
+> one visitor. It shows what file they asked for and what it sent back
+> (`200` = found, `404` = not found, `400` = bad request).
+
 **Terminal 2 — fetch something:**
 
 ```
 bin\bcurl.exe localhost:9000/index.html
 ```
+
+<p align="center">
+  <img src="docs/screenshots/06-fetch.png" alt="bcurl fetching a file" width="640">
+</p>
+
+> **What you see:** the client asked for `notes.txt` and printed the file.
+> That is all a normal fetch looks like.
 
 The body goes to stdout, so redirecting to a file just works:
 
@@ -133,6 +161,11 @@ run_demo.bat
   <img src="docs/screenshots/03-tests.png" alt="all six tests passing" width="700">
 </p>
 
+> **What you see:** six checks, one after another. Each one ends with an
+> **exit code**: `0` means it worked, `4` means the server said "no" (which
+> is the right answer for a missing file, a broken message, or a path that
+> tries to sneak out of the `www` folder). All six give the expected code.
+
 | # | What it checks | Expected |
 |---|----------------|----------|
 | 1 | A page that exists | the HTML, exit **0** |
@@ -174,6 +207,11 @@ bin\bcurl.exe -v localhost:9000/notes.txt
   <img src="docs/screenshots/04-verbose.png" alt="every frame hexdumped" width="700">
 </p>
 
+> **What you see:** with `-v`, the client shows the **raw bytes** of every
+> box. `C>` lines are what the client **sent**, `C<` lines are what it
+> **got back**. The green numbers are the bytes, and the text on the right
+> is the same bytes shown as letters.
+
 Reading the first line of the request frame, `00 00 2c 01 01 00 00 01`:
 
 ```
@@ -199,6 +237,10 @@ bin\bcurl.exe -v --send-unknown localhost:9000/notes.txt
 <p align="center">
   <img src="docs/screenshots/05-unknown.png" alt="an unknown frame being skipped" width="700">
 </p>
+
+> **What you see:** the client first sends a box of a kind the server has
+> never seen (`type 0x2a`). The server simply skips it, and the real
+> request after it still works. The file arrives as normal.
 
 The server has never heard of type `0x2a`. It does not have to — the length
 field in the fixed header tells it how many bytes to throw away:
