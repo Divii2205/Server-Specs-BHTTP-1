@@ -96,6 +96,17 @@ static sock_t connect_to(const std::string& host, int port) {
     return s;
 }
 
+// Hexdump a received frame for -v. read_frame() hands back only the
+// payload, so rebuild the 8 header bytes to show the real frame.
+static void dump_received(const Frame& f) {
+    std::vector<uint8_t> whole;
+    put_frame_header(whole, (uint32_t)f.payload.size(), f.type, f.flags, f.stream);
+    whole.insert(whole.end(), f.payload.begin(), f.payload.end());
+    char label[80];
+    std::snprintf(label, sizeof label, "C< %s frame", type_name(f.type));
+    hexdump(label, whole);
+}
+
 // ---------------------------------------------------------------------
 // one request / response exchange on an already-open connection
 // Returns the HTTP-style status code, or 0 if the exchange failed.
@@ -114,14 +125,16 @@ static int do_exchange(sock_t s, uint32_t stream, const std::string& host,
         send_all(s, f.data(), f.size());
 
         Frame r;
-        if (read_frame((long long)s, r) == FRAME_OK && r.type == T_RESPONSE &&
-            r.payload.size() >= 2) {
+        bool got = read_frame((long long)s, r) == FRAME_OK;
+        if (got && g_verbose) dump_received(r);
+        if (got && r.type == T_RESPONSE && r.payload.size() >= 2) {
             int st = get_u16(r.payload, 0);
             std::fprintf(stderr, "bcurl: server answered %d to the malformed frame\n", st);
             // Drain the little error body that follows.
             if (!(r.flags & F_END_MSG)) {
                 Frame d;
                 while (read_frame((long long)s, d) == FRAME_OK) {
+                    if (g_verbose) dump_received(d);
                     if (d.type == T_DATA) {
                         std::fwrite(d.payload.data(), 1, d.payload.size(), stdout);
                         if (d.flags & F_END_MSG) break;
@@ -176,15 +189,7 @@ static int do_exchange(sock_t s, uint32_t stream, const std::string& host,
             return 0;
         }
 
-        if (g_verbose) {
-            // Rebuild the 8 header bytes so the dump shows the real frame.
-            std::vector<uint8_t> whole;
-            put_frame_header(whole, (uint32_t)f.payload.size(), f.type, f.flags, f.stream);
-            whole.insert(whole.end(), f.payload.begin(), f.payload.end());
-            char label[80];
-            std::snprintf(label, sizeof label, "C< %s frame", type_name(f.type));
-            hexdump(label, whole);
-        }
+        if (g_verbose) dump_received(f);
 
         if (f.type == T_RESPONSE) {
             if (f.payload.size() < 2) {
