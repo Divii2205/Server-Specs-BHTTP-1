@@ -31,6 +31,7 @@
   typedef socklen_t socklen_int;
 #endif
 
+#include <cerrno>
 #include <string>
 
 // Call once at the start of main(). On Windows it starts Winsock,
